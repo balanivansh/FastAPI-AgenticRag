@@ -1,0 +1,30 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+fastapiRag/
+
+# Environment configurations and credentials
+.env
+.logfire/
+
+# Local cache and databases
+.pytest_cache/
+.ruff_cache/
+*.db
+*.sqlite
+
+# Data directories
+DATA/
+DATA_before_url_filter/
+processed_data/
+ui/sessions.json
+
+# OS files
+.DS_Store
