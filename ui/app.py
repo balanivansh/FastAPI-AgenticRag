@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 import socket
 import time
@@ -18,12 +19,11 @@ def is_port_open(port):
 if not is_port_open(8000):
     try:
         print("🚀 Starting FastAPI backend in the background...")
+        # Run uvicorn using the exact same virtual environment python binary
         subprocess.Popen(
-            ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
+            [sys.executable, "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
         )
-        time.sleep(4)  # Wait for uvicorn to initialize
+        time.sleep(6)  # Wait for uvicorn to initialize
     except Exception as e:
         print(f"Failed to start backend in background: {e}")
 
@@ -60,7 +60,7 @@ def load_saved_sessions():
             
     # Sync with active backend threads to remove stale (wiped) sessions
     try:
-        base_url = os.getenv("BACKEND_URL", "http://localhost:8000")
+        base_url = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
         response = requests.get(f"{base_url}/active_threads", timeout=2)
         if response.status_code == 200:
             data = response.json()
@@ -140,7 +140,7 @@ with st.sidebar:
         if selected_to_load and selected_to_load != st.session_state.session_id:
             if st.button("🔄 Switch Chat", use_container_width=True):
                 try:
-                    base_url = os.getenv("BACKEND_URL", "http://localhost:8000")
+                    base_url = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
                     response = requests.get(f"{base_url}/history/{selected_to_load}", timeout=10)
                     data = response.json()
                     if data.get("status") == "success" and data.get("messages"):
@@ -171,7 +171,7 @@ with st.sidebar:
     if st.button("Sync & Load History", use_container_width=True):
         if load_id.strip():
             try:
-                base_url = os.getenv("BACKEND_URL", "http://localhost:8000")
+                base_url = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
                 response = requests.get(f"{base_url}/history/{load_id.strip()}", timeout=10)
                 data = response.json()
                 if data.get("status") == "success" and data.get("messages"):
@@ -245,7 +245,7 @@ if prompt := st.chat_input("Ask about your documentation..."):
                     # DISTRIBUTED TRACE: Calling Backend
                     with logfire.span("📡 Calling RAG Backend"):
                         # Get backend URL from env, or default to local if not set
-                        base_url = os.getenv("BACKEND_URL", "http://localhost:8000")
+                        base_url = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
                         url = f"{base_url}/query"
                         payload = {"q": prompt, "thread_id": st.session_state.session_id}
                         response = requests.post(url, json=payload, timeout=60)
