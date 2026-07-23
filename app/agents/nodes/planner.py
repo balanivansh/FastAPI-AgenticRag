@@ -28,8 +28,8 @@ def planner_node(state: AgentState):
     "{user_message}"
     
     Classification Rules:
-    - If the user's latest message is a greeting (e.g., hello, hi), general chit-chat (e.g., how are you), or asks a personal question that relies ONLY on the conversation history (e.g., "what did I say my name was?"), output exactly: CONVERSATIONAL
-    - If the user's latest message is a technical question, code request, explanation of a programming concept, database question, or related to FastAPI/Python, output exactly: TECHNICAL
+    - CONVERSATIONAL: The user's message is conversational in nature (such as greetings, introductions, statements of personal facts or preferences they expect the assistant to remember, or follow-up questions relying strictly on previous conversation memory).
+    - TECHNICAL: The user's message is an engineering query (such as technical questions, code generation requests, programming concept explanations, database schema designs, or topics directly related to software development in Python and FastAPI).
     
     Output format: Output ONLY the raw string "CONVERSATIONAL" or "TECHNICAL". No markdown, no quotes, no extra text.
     """
