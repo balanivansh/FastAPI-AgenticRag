@@ -16,16 +16,18 @@ def is_port_open(port):
 
 
 # Start FastAPI backend in the background if it is not already running on port 8000
-if not is_port_open(8000):
-    try:
-        print("🚀 Starting FastAPI backend in the background...")
-        # Run uvicorn using the exact same virtual environment python binary
-        subprocess.Popen(
-            [sys.executable, "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-        )
-        time.sleep(6)  # Wait for uvicorn to initialize
-    except Exception as e:
-        print(f"Failed to start backend in background: {e}")
+if "backend_started" not in st.session_state:
+    st.session_state["backend_started"] = True
+    if not is_port_open(8000):
+        try:
+            print("🚀 Starting FastAPI backend in the background...")
+            # Run uvicorn using the exact same virtual environment python binary
+            subprocess.Popen(
+                [sys.executable, "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+            )
+            time.sleep(6)  # Wait for uvicorn to initialize
+        except Exception as e:
+            print(f"Failed to start backend in background: {e}")
 
 
 # Load environment variables explicitly from the root directory
