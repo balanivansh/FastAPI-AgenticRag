@@ -53,7 +53,7 @@ def query(request: QueryRequest):
     """
     Executes the LangGraph RAG flow with memory using a POST request.
     """
-    q = request.q
+    q = request.q.strip()
     thread_id = request.thread_id
 
     initial_state = {
