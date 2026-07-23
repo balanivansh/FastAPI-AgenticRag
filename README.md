@@ -8,10 +8,10 @@ A production-grade, highly-secured Agentic Retrieval-Augmented Generation (RAG) 
 
 ```
                +----------------------------------------+
-               |        Streamlit Web Interface         |
+               |   Streamlit Interface (Streamlit Cloud)|
                +-------------------+--------------------+
                                    |
-                       POST /query | (JSON Payload)
+                       POST /query | (Spawns FastAPI Backend on Port 8000 internally)
                                    v
                +-------------------+--------------------+
                |           FastAPI Gateway              |
@@ -50,7 +50,7 @@ A production-grade, highly-secured Agentic Retrieval-Augmented Generation (RAG) 
 ```
 
 ### Key Modules:
-1. **Frontend Dashboard (`ui/`):** Streamlit-based chat interface. Features dynamic thought-step visualization, markdown code blocks rendering, source citation expanders, and a **self-healing session manager** that automatically synchronizes/cleans stale sessions when the backend restarts.
+1. **Frontend Dashboard (`ui/app.py`):** Streamlit-based chat interface. Features dynamic thought-step visualization, markdown code blocks rendering, source citation expanders, and a **self-healing session manager** that automatically synchronizes/cleans stale sessions when the backend restarts.
 2. **Backend Server (`app/main.py`):** FastAPI web server exposing `/query` for execution, `/history/{thread_id}` for session restoration, and `/active_threads` to list live sessions.
 3. **Guardrails Firewall (`app/guardrails/`):** Layer 1 NVIDIA NeMo Guardrails intercepting jailbreaks and off-topic questions.
 4. **Agent Orchestrator (`app/agents/`):** LangGraph execution plan:
@@ -101,7 +101,7 @@ LOGFIRE_TOKEN = "your-logfire-write-token"
 
 ---
 
-## 🚀 Running the Application Localy
+## 🚀 Running the Application Locally
 
 ### 1. Start the Backend API Server
 ```bash
@@ -117,12 +117,15 @@ Open your browser at `http://localhost:8501` to chat!
 
 ---
 
-## ☁️ Production Deployment on Hugging Face Spaces
+## ☁️ Free Production Deployment on Streamlit Community Cloud
 
-Deploying on **Hugging Face Spaces** is the recommended route because it provides **16GB of RAM** for free. This runs NeMo Guardrails and FlashRank models comfortably without any out-of-memory errors.
+Streamlit Community Cloud is **100% Free** and provides **1GB of RAM** per application. This is more than enough memory to run the entire backend and frontend together without any upgrades.
+
+The code in `ui/app.py` has an automatic background-spawner that launches the FastAPI backend server dynamically in a background process when Streamlit starts up.
 
 ### Steps to Deploy:
-1. Create a free account at [huggingface.co](https://huggingface.co) and create a **New Space**.
-2. Name your space, select **Docker** as the Space SDK, and choose the **Blank** template.
-3. Add your environment variables (from your `.env` file) as **Variables and Secrets** in the Space settings tab.
-4. Clone the space repository locally or link it as a remote, then push this codebase. Hugging Face will build the container and deploy your backend securely.
+1. Log in to [share.streamlit.io](https://share.streamlit.io/) using your GitHub account.
+2. Click **Create app**.
+3. Select your GitHub repository `balanivansh/FastAPI-AgenticRag` and set the Main file path to **`ui/app.py`**.
+4. Click **Advanced settings** and paste your environment variables (from your `.env` file) into the **Secrets** text box.
+5. Click **Deploy**. Streamlit Cloud will build the app and run the backend process in the background. Your app will be live and fully functional!

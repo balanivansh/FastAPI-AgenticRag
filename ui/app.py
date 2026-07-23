@@ -1,10 +1,31 @@
 import os
+import subprocess
+import socket
+import time
 import streamlit as st
 import requests
-import time
 import uuid
 import logfire
 from dotenv import load_dotenv
+
+
+def is_port_open(port):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(('127.0.0.1', port)) == 0
+
+
+# Start FastAPI backend in the background if it is not already running on port 8000
+if not is_port_open(8000):
+    try:
+        print("🚀 Starting FastAPI backend in the background...")
+        subprocess.Popen(
+            ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+        time.sleep(4)  # Wait for uvicorn to initialize
+    except Exception as e:
+        print(f"Failed to start backend in background: {e}")
 
 
 # Load environment variables explicitly from the root directory
